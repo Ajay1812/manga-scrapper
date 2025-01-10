@@ -34,9 +34,7 @@ This project scrapes manga data (image URLs) from a manga website and stores the
 #### Requirements
 
 ```
-
    pip install -r requirement.txt
-
 ```  
 
 ### Usage : Scraping Manga Data
@@ -62,9 +60,7 @@ python manga_scrapper_concurrent.py
 2. Alternatively, you can run the store_images.py script to download images for all manga stored in the database:
 
 ```
-
 python store_images.py
-
 ```
 
 ### Folder Structure for Images
