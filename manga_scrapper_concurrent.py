@@ -5,9 +5,6 @@ import time
 import json
 from concurrent.futures import ThreadPoolExecutor
 
-def logger():
-  timestamp
-
 
 def fetch_chapter_data(manga_name, chapter, db_lock):
     chapter_formatted = f"{chapter:03d}"  # Format chapter number with leading zeros
