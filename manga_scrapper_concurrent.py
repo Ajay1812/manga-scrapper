@@ -7,11 +7,16 @@ from concurrent.futures import ThreadPoolExecutor
 
 # Scrape Alternative
 # https://optoons.com/webtoon/wind-breaker/chapter-535/
+# https://www.mangabats.com/manga/naruto/chapter-627
 
 
 def fetch_chapter_data(manga_name, chapter, db_lock):
-    chapter_formatted = f"{chapter:03d}"  # Format chapter number with leading zeros
-    chapter_url = f'https://www.mangasub.net/manga/{manga_name}/ch-{chapter_formatted}/'
+    # chapter_formatted = f"{chapter:03d}"  # Format chapter number with leading zeros
+    # chapter_url = f'https://www.mangasub.net/manga/{manga_name}/ch-{chapter_formatted}/'
+
+    chapter_formatted = chapter  # Format chapter number with leading zeros
+
+    chapter_url = f'https://optoons.com/webtoon/{manga_name}/chapter-{chapter_formatted}/'
     print(f"Fetching data for {manga_name.replace('-', ' ')} Chapter {chapter_formatted} from {chapter_url}")
     
     response = requests.get(chapter_url)
