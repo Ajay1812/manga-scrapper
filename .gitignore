@@ -20,3 +20,5 @@ __pypackages__/
 env/
 venv/
 ENV/
+
+data/

@@ -11,14 +11,16 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 def fetch_chapter_data(manga_name, chapter, db_lock):
-    # chapter_formatted = f"{chapter:03d}"  # Format chapter number with leading zeros
-    # chapter_url = f'https://www.mangasub.net/manga/{manga_name}/ch-{chapter_formatted}/'
-
     chapter_formatted = chapter  # Format chapter number with leading zeros
-
     chapter_url = f'https://optoons.com/webtoon/{manga_name}/chapter-{chapter_formatted}/'
     print(f"Fetching data for {manga_name.replace('-', ' ')} Chapter {chapter_formatted} from {chapter_url}")
-    
+
+    with db_lock:
+        cursor.execute('SELECT COUNT(*) FROM manga WHERE chapter_url = ?', (chapter_url,))
+        if cursor.fetchone()[0] > 0:
+            print(f"Skipping {manga_name.replace('-', ' ')} Chapter {chapter_formatted} as it already exists in the database.")
+            return
+
     response = requests.get(chapter_url)
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -26,7 +28,7 @@ def fetch_chapter_data(manga_name, chapter, db_lock):
         if content:
             image_urls = [img['src'].strip() for img in content.find_all('img') if img.has_attr('src') and img['src'].strip()]
             image_urls_json = json.dumps(image_urls)
-            
+
             # Use the lock to safely write to the database
             with db_lock:
                 cursor.execute('''
@@ -52,7 +54,7 @@ def main():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         manga_name TEXT,
         chapter TEXT,
-        chapter_url TEXT,
+        chapter_url TEXT UNIQUE,
         image_url TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
@@ -66,7 +68,7 @@ def main():
         for manga_name in manga_names:
             for chapter in range(start, end + 1):
                 futures.append(executor.submit(fetch_chapter_data, manga_name, chapter, db_lock))
-        
+
         for future in futures:
             future.result()
 
