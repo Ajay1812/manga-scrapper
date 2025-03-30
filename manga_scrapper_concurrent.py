@@ -27,6 +27,7 @@ def fetch_chapter_data(manga_name, chapter, db_lock):
         content = soup.find('div', class_="reading-content")
         if content:
             image_urls = [img['src'].strip() for img in content.find_all('img') if img.has_attr('src') and img['src'].strip()]
+            image_urls = image_urls[1 : -1]
             image_urls_json = json.dumps(image_urls)
 
             # Use the lock to safely write to the database
